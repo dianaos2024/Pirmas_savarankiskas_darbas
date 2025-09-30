@@ -102,4 +102,30 @@
         s.egzaminas = dist(gen);
         s.rez();
         s.rezMediana();
+    }
+
+    bool nuskaitytiIsFailo(const std::string& failoVardas, std::vector<Studentas>& grupe) {
+        std::ifstream in(failoVardas);
+        std::string eilute;
+        std::getline(in, eilute);
+
+    while (std::getline(in, eilute)) {
+        std::istringstream iss(eilute);
+        std::string vardas, pavarde;
+        int skaicius;
+        std::vector<int> nd;
+        int egzaminas;
+        iss >> vardas >> pavarde;
+
+        while (iss >> skaicius) {
+            nd.push_back(skaicius);
+        }
+        if (nd.empty()) continue;
+        egzaminas = nd.back();
+        nd.pop_back();
+
+        Studentas s(vardas, pavarde, nd, egzaminas);
+        grupe.push_back(s);
+    }
+    return true;
 };
