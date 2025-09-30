@@ -5,6 +5,9 @@
 #include <iomanip>
 #include <algorithm>
 #include <random>
+#include <fstream>
+#include <sstream>
+
 using std::cin;
 using std::cout;
 using std::endl;
@@ -34,5 +37,9 @@ public:
     ~Studentas();
     friend std::istream& operator>>(std::istream& is, Studentas& s);
     friend std::ostream& operator<<(std::ostream& os, const Studentas& s);
+    std::string getVardas() const { return vardas; };
+    std::string getPavarde() const { return pavarde; };
     void generuotiAtsitiktinai(Studentas& s, int nPazymiu = 5);
 };
+
+bool nuskaitytiIsFailo(const std::string& failoVardas, std::vector<Studentas>& grupe);
