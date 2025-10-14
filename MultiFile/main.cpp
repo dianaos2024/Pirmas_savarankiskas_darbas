@@ -1,53 +1,51 @@
 #include "MyLib.h"
+#include <chrono>
+
+using namespace std::chrono;
 
 int main() {
-try {
-    vector<Studentas> grupe;
-    int pasirinkimas;
-    std::cout << "1 - Rankinis ivedimas\n2 - Atsitiktinis generavimas\n3 - Nuskaitymas is failo\n";
-    std::cin >> pasirinkimas;
+    vector<int> dydziai = {1000, 10000, 100000, 1000000};
 
-    int kiek;
-    int kiekNd;
+    for (int kiek : dydziai) {
+        std::string failas = "studentai_" + std::to_string(kiek) + ".txt";
 
-    if (pasirinkimas == 1) {
-            std::cout << "Kiek studentu norite sugeneruoti? ";
-            std::cin >> kiek;
-            for (int i = 0; i < kiek; i++) {
-                Studentas s;
-                std::cin >> s;
-                grupe.push_back(s);
-            }
-    } else if (pasirinkimas == 2) {
-            std::cout << "Kiek studentu norite sugeneruoti? ";
-            std::cin >> kiek;
+        auto start = high_resolution_clock::now();
+        Studentas::generuotiFaila(failas, kiek);
+        auto end = high_resolution_clock::now();
+        std::cout << "Failo " << failas << " kurimas uztruko "
+                  << duration_cast<milliseconds>(end - start).count() << " ms\n";
 
-            std::cout << "Kiek namu darbu pazymiu generuoti kiekvienam? ";
-            std::cin >> kiekNd;
-            for (int i = 0; i < kiek; i++) {
-                Studentas s;
-                s.generuotiAtsitiktinai(s, kiekNd);
-                grupe.push_back(s);
-            }
-    } else if (pasirinkimas == 3) {
-            if (!nuskaitytiIsFailo("kursiokai.txt", grupe)) {
-                std::cerr << "Nepavyko nuskaityti failo.\n";
-                return 1;
-            }
-    }
+        start = high_resolution_clock::now();
+        auto grupe = Studentas::nuskaitytiIsFailo(failas);
+        end = high_resolution_clock::now();
+        std::cout << "Failo " << failas << " nuskaitymas uztruko "
+                  << duration_cast<milliseconds>(end - start).count() << " ms\n";
 
-    std::sort(grupe.begin(), grupe.end(), [](const Studentas& a, const Studentas& b) {
-            return a.getPavarde() < b.getPavarde();
-        });
+        start = high_resolution_clock::now();
+        vector<Studentas> vargsai;
+        vector<Studentas> kietai;
+        for (auto& s : grupe) {
+            if (s.getRezultatas() < 5.0)
+                vargsai.push_back(s);
+            else
+                kietai.push_back(s);
+        }
+        end = high_resolution_clock::now();
+        std::cout << "Studentu rusiavimas uztruko "
+                  << duration_cast<milliseconds>(end - start).count() << " ms\n";
 
-    cout << "Pavarde       Vardas           Galutinis (Vid.) / Galutinis (Med.)\n";
-    cout << "------------------------------------------------------------------\n";
-    for (const auto& s : grupe) {
-        cout << s << endl;
+        start = high_resolution_clock::now();
+        std::ofstream outVargsai("vargsiukai_" + std::to_string(kiek) + ".txt");
+        std::ofstream outKietai("kietiakiai_" + std::to_string(kiek) + ".txt");
+
+        outVargsai << "Pavarde Vardas Vidurkis Mediana\n";
+        for (auto& s : vargsai) outVargsai << s << "\n";
+
+        outKietai << "Pavarde Vardas Vidurkis Mediana\n";
+        for (auto& s : kietai) outKietai << s << "\n";
+        end = high_resolution_clock::now();
+        std::cout << "Isvedimas i failus uztruko "
+                  << duration_cast<milliseconds>(end - start).count() << " ms\n\n";
     }
     return 0;
-   } catch (const std::exception& e) {
-        std::cerr << "Klaida: " << e.what() << std::endl;
-        return 1;
-    }
-};
+}
