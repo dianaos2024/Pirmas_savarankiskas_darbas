@@ -1,22 +1,22 @@
 #include "MyLib.h"
 
-Studentas::Studentas() : vardas("Testas"), pavarde("TestasTestas"), paz({1,5,8,7,7}), egzaminas(10), rezultatas(0), rezultatasMediana(0) {
-    rez();
-    rezMediana();
-}
-
-Studentas::Studentas(string A, string B, vector<int> C, int D)
-    : vardas(A), pavarde(B), paz(C), egzaminas(D), rezultatas(0), rezultatasMediana(0) {
-    rez();
-    rezMediana();
-}
-
-Studentas::Studentas(const Studentas& other)
-    : vardas(other.vardas), pavarde(other.pavarde), paz(other.paz), egzaminas(other.egzaminas),
-      rezultatas(other.rezultatas), rezultatasMediana(other.rezultatasMediana) {}
-
-Studentas& Studentas::operator=(const Studentas& other) {
-    if (this != &other) {
+    Studentas::Studentas(){
+        vardas="Testas";
+        pavarde="TestasTestas";
+        paz={1,5,8,7,7,4,8,9,6,3,9};
+        egzaminas=10;
+        rez();
+        rezMediana();
+        }
+    Studentas::Studentas(string A,string B, vector<int> C, int D){
+        vardas=A;
+        pavarde=B;
+        paz=C;
+        egzaminas=D;
+        rez();
+        rezMediana();
+        }
+    Studentas::Studentas(const Studentas& other) {
         vardas = other.vardas;
         pavarde = other.pavarde;
         paz = other.paz;
@@ -24,86 +24,142 @@ Studentas& Studentas::operator=(const Studentas& other) {
         rezultatas = other.rezultatas;
         rezultatasMediana = other.rezultatasMediana;
     }
-    return *this;
-}
-
-Studentas::~Studentas() {}
-
-void Studentas::rez() {
-    double vid = 0;
-    if (!paz.empty()) {
-        vid = accumulate(paz.begin(), paz.end(), 0.0) / paz.size();
+    Studentas& Studentas::operator=(const Studentas& other) {
+            vardas = other.vardas;
+            pavarde = other.pavarde;
+            paz = other.paz;
+            egzaminas = other.egzaminas;
+            rezultatas = other.rezultatas;
+            rezultatasMediana = other.rezultatasMediana;
+        return *this;
     }
-    rezultatas = 0.4 * vid + 0.6 * egzaminas;
-}
-
-void Studentas::rezMediana() {
-    if (paz.empty()) {
-        rezultatasMediana = 0;
-        return;
+    void Studentas::rez(){
+            rezultatas= accumulate(paz.begin(), paz.end(), 0) / paz.size() *0.4 +egzaminas*0.6;
     }
-    vector<int> temp = paz;
-    sort(temp.begin(), temp.end());
-    double mediana = 0;
-    size_t n = temp.size();
-    if (n % 2 == 0) {
-        mediana = (temp[n / 2 - 1] + temp[n / 2]) / 2.0;
-    } else {
-        mediana = temp[n / 2];
+    void Studentas::rezMediana() {
+        std::sort(paz.begin(), paz.end());
+        size_t n = paz.size();
+        double mediana;
+        if (n % 2 == 0) {
+            mediana = (paz[n / 2 - 1] + paz[n / 2]) / 2.0;
+        } else {
+            mediana = paz[n / 2];
+        }
+        rezultatasMediana = 0.4 * mediana + 0.6 * egzaminas;
     }
-    rezultatasMediana = 0.4 * mediana + 0.6 * egzaminas;
-}
-
-std::ostream& operator<<(std::ostream& os, const Studentas& s) {
-    os << left << setw(15) << s.pavarde << setw(10) << s.vardas
-       << right << fixed << setprecision(2)
-       << setw(10) << s.rezultatas << setw(10) << s.rezultatasMediana;
-    return os;
-}
-
-std::istream& operator>>(std::istream& is, Studentas& s) {
-    s.paz.clear();
-    is >> s.pavarde >> s.vardas;
-    int nd;
-    for (int i = 0; i < 5; i++) {
-        is >> nd;
-        s.paz.push_back(nd);
+    Studentas::~Studentas(){
+            vardas.clear();
+            pavarde.clear();
+            paz.clear();
+            egzaminas=0;
+            rezultatas=0;
+            rezultatasMediana = 0;
     }
-    is >> s.egzaminas;
-    s.rez();
-    s.rezMediana();
-    return is;
-}
+   std::istream& operator>>(std::istream& is, Studentas& s) {
+            cout << "Vardas: ";
+            is >> s.vardas;
+            cout << "Pavarde: ";
+            is >> s.pavarde;
 
-void Studentas::generuotiAtsitiktinai(Studentas& s, int nPazymiu) {
-    static std::default_random_engine gen((std::random_device())());
-    std::uniform_int_distribution<int> dist(1, 10);
-
-    s.vardas = "Vardas" + std::to_string(dist(gen));
-    s.pavarde = "Pavarde" + std::to_string(dist(gen));
-
-    s.paz.clear();
-    for (int i = 0; i < nPazymiu; i++) {
-        s.paz.push_back(dist(gen));
+            int paz;
+            for (int i = 0; i < 5; i++) {
+                is >> paz;
+                s.paz.push_back(paz);
+            }
+            cout << "Egzaminas: ";
+            is >> s.egzaminas;
+            s.rez();
+            s.rezMediana();
+            return is;
     }
-    s.egzaminas = dist(gen);
-    s.rez();
-    s.rezMediana();
+
+    std::ostream& operator<<(std::ostream& os, const Studentas& s) {
+            os << std::left << std::setw(15) << s.pavarde << std::setw(10) << s.vardas << std::right << std::fixed << std::setprecision(2) << std::setw(20) << s.rezultatas << std::setw(20) << s.rezultatasMediana;
+            return os;
+    }
+    void Studentas::generuotiAtsitiktinai(Studentas& s, int nPazymiu) {
+        static std::mt19937 gen(std::random_device{}());
+        std::uniform_int_distribution<> dist(1, 10);
+
+        static const std::vector<std::string> vardai = {
+            "Jonas", "Marius", "Lukas", "Tomas", "Paulius",
+            "Dovydas", "Simonas", "Martynas", "Arnas", "Dominykas"
+        };
+        static const std::vector<std::string> pavardes = {
+            "Petrauskas", "Kazlauskas", "Sabonis", "Jonaitis",
+            "Pavardenis", "Mockus", "Butkus", "Zukauskas", "Jankauskas"
+        };
+
+        std::uniform_int_distribution<> vDist(0, vardai.size() - 1);
+        std::uniform_int_distribution<> pDist(0, pavardes.size() - 1);
+        s.vardas = vardai[vDist(gen)];
+        s.pavarde = pavardes[pDist(gen)];
+
+        s.paz.clear();
+            for (int i = 0; i < nPazymiu; i++) {
+                s.paz.push_back(dist(gen));
+            }
+        s.egzaminas = dist(gen);
+        s.rez();
+        s.rezMediana();
+    }
+
+    void Studentas::generuotas_failas(int sk) {
+        std::stringstream ss;
+        ss << "studentai_" << sk << ".txt";
+        string failas = ss.str();
+        std::ofstream outputFile(failas);
+        outputFile << "Pavarde\tVardas\tND1\tND2\tND3\tND4\tND5\tEgzaminas\n";
+            auto generateGrade = []() {
+                return rand() % 11;
+            };
+        struct Studentas {
+        std::string vardas;
+        std::string pavarde;
+        int nd1, nd2, nd3, nd4, nd5, egz;
+        double getGalutinisBalas() const {
+        return (nd1 + nd2 + nd3 + nd4 + nd5 + egz) / 6.0;
+    }
+        };
+            for (int j = 1; j <= sk; j++) {
+                std::string studentName = "Vardas" + std::to_string(j);
+                std::string studentLastName = "Pavarde" + std::to_string(j);
+                int nd1 = generateGrade();
+                int nd2 = generateGrade();
+                int nd3 = generateGrade();
+                int nd4 = generateGrade();
+                int nd5 = generateGrade();
+                int exam = generateGrade();
+                outputFile << studentLastName << "\t" << studentName << "\t"
+                           << nd1 << "\t" << nd2 << "\t" << nd3 << "\t"
+                           << nd4 << "\t" << nd5 << "\t" << exam << "\n";
+            }
+        outputFile.close();
+        cout << "Failas " << failas << " sukurtas su " << sk << " irasais." << endl;
 }
 
-bool nuskaitytiIsFailo(const std::string& failoVardas, std::vector<Studentas>& grupe) {
-    std::ifstream in(failoVardas);
-    if (!in.is_open()) return false;
-
-    grupe.clear();
-    std::string eilute;
-    std::getline(in, eilute);
+    bool nuskaitytiIsFailo(const std::string& failoVardas, std::vector<Studentas>& grupe) {
+        std::ifstream in(failoVardas);
+        std::string eilute;
+        std::getline(in, eilute);
 
     while (std::getline(in, eilute)) {
         std::istringstream iss(eilute);
-        Studentas s;
-        iss >> s;
+        std::string vardas, pavarde;
+        int skaicius;
+        std::vector<int> nd;
+        int egzaminas;
+        iss >> vardas >> pavarde;
+
+        while (iss >> skaicius) {
+            nd.push_back(skaicius);
+        }
+        if (nd.empty()) continue;
+        egzaminas = nd.back();
+        nd.pop_back();
+
+        Studentas s(vardas, pavarde, nd, egzaminas);
         grupe.push_back(s);
     }
     return true;
-}
+};
