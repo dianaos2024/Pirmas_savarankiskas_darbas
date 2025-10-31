@@ -136,7 +136,7 @@
             }
         outputFile.close();
         cout << "Failas " << failas << " sukurtas su " << sk << " irasais." << endl;
-}
+    }
 
     bool nuskaitytiIsFailo(const std::string& failoVardas, std::vector<Studentas>& grupe) {
         std::ifstream in(failoVardas);
