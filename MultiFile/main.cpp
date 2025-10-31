@@ -42,8 +42,19 @@ try {
                 s.generuotas_failas(100000);
                 s.generuotas_failas(1000000);
                 s.generuotas_failas(10000000);
-            return 0;
-    }
+
+                    auto start = std::chrono::high_resolution_clock::now();
+                int sum = 0;
+                    for (int i = 0; i < 1000000; ++i) {
+                        sum += i;
+                    }
+                    auto end = std::chrono::high_resolution_clock::now();
+                    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+                    std::cout << "Laikas, uztruktas funkcijos vykdymui: "
+                              << duration.count() << " mikrosekundziu" << std::endl;
+
+                            return 0;
+                    }
 
     std::sort(grupe.begin(), grupe.end(), [](const Studentas& a, const Studentas& b) {
             return a.getPavarde() < b.getPavarde();
