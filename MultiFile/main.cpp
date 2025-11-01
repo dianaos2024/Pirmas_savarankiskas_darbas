@@ -1,6 +1,52 @@
 #include "MyLib.h"
 
+template <typename Container>
+void testKonteineris(const std::string& failoVardas) {
+    Container grupe;
+
+    auto startNuskaitymas = std::chrono::high_resolution_clock::now();
+    auto endNuskaitymas = std::chrono::high_resolution_clock::now();
+    auto nuskaitymoTrukme = std::chrono::duration_cast<std::chrono::milliseconds>(endNuskaitymas - startNuskaitymas);
+    std::cout << "Duomenu nuskaitymas (" << typeid(Container).name() << ") uztruko: "
+              << nuskaitymoTrukme.count() << " ms\n";
+
+    auto startRusiavimas = std::chrono::high_resolution_clock::now();
+
+    Container vargsiukai;
+    Container kietiakiai;
+
+    for (const auto& s : grupe) {
+        if (s.getRezultatas() < 5.0) {
+            vargsiukai.push_back(s);
+        } else {
+            kietiakiai.push_back(s);
+        }
+    }
+
+    auto endRusiavimas = std::chrono::high_resolution_clock::now();
+    auto rusiavimoTrukme = std::chrono::duration_cast<std::chrono::milliseconds>(endRusiavimas - startRusiavimas);
+    std::cout << "Studentu padalijimas (" << typeid(Container).name() << ") uztruko: "
+              << rusiavimoTrukme.count() << " ms\n";
+
+    auto startIrasymas = std::chrono::high_resolution_clock::now();
+
+    std::ofstream outVargs("vargsiukai.txt");
+    std::ofstream outKiet("kietiakiai.txt");
+
+    for (const auto& s : vargsiukai) outVargs << s << "\n";
+    for (const auto& s : kietiakiai) outKiet << s << "\n";
+
+    outVargs.close();
+    outKiet.close();
+
+    auto endIrasymas = std::chrono::high_resolution_clock::now();
+    auto irasymoTrukme = std::chrono::duration_cast<std::chrono::milliseconds>(endIrasymas - startIrasymas);
+    std::cout << "Irasymas i failus (" << typeid(Container).name() << ") uztruko: "
+              << irasymoTrukme.count() << " ms\n\n";
+}
+
 int main() {
+
 try {
     vector<Studentas> grupe;
     int pasirinkimas;
@@ -109,6 +155,18 @@ try {
     auto endIrasymas = std::chrono::high_resolution_clock::now();
     auto irasymasTrukme = std::chrono::duration_cast<std::chrono::milliseconds>(endIrasymas - startIrasymas);
     std::cout << "Irasymas i failus uztruko: " << irasymasTrukme.count() << " ms\n";
+
+    std::string failoVardas = "kursiokai.txt";
+
+        std::cout << "== Testuojame std::vector ==\n";
+        testKonteineris<std::vector<Studentas>>(failoVardas);
+
+        std::cout << "== Testuojame std::list ==\n";
+        testKonteineris<std::list<Studentas>>(failoVardas);
+
+        std::cout << "== Testuojame std::deque ==\n";
+        testKonteineris<std::deque<Studentas>>(failoVardas);
+
         return 0;
    } catch (const std::exception& e) {
         std::cerr << "Klaida: " << e.what() << std::endl;
