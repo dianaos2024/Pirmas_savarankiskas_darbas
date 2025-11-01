@@ -37,6 +37,7 @@ public:
     Studentas& operator=(const Studentas& other);
     void rez();
     void rezMediana();
+    double getRezultatas() const { return rezultatas; }
     ~Studentas();
     friend std::istream& operator>>(std::istream& is, Studentas& s);
     friend std::ostream& operator<<(std::ostream& os, const Studentas& s);
