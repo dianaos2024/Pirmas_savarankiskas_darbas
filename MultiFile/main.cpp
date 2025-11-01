@@ -115,16 +115,11 @@ try {
     }
     auto startRusiavimas = std::chrono::high_resolution_clock::now();
 
-        std::vector<Studentas> vargsiukai;
-        std::vector<Studentas> kietiakiai;
+        auto it = std::stable_partition(grupe.begin(), grupe.end(),
+                                [](const Studentas& s){ return s.getRezultatas() >= 5.0; });
+        std::vector<Studentas> kietiakiai(grupe.begin(), it);
+        std::vector<Studentas> vargsiukai(it, grupe.end());
 
-        for (const auto& s : grupe) {
-            if (s.getRezultatas() < 5.0) {
-                vargsiukai.push_back(s);
-            } else {
-                kietiakiai.push_back(s);
-            }
-        }
     auto endRusiavimas = std::chrono::high_resolution_clock::now();
     auto rusiavimasTrukme = std::chrono::duration_cast<std::chrono::milliseconds>(endRusiavimas - startRusiavimas);
     std::cout << "Studentu padalijimas uztruko: " << rusiavimasTrukme.count() << " ms\n";
