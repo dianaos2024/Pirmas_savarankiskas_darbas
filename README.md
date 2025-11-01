@@ -22,7 +22,7 @@ Pagrindiniame lange yra pasirinkimo meniu:
 ## Releasai
 - **v0.1** – pradinė versija, veikia pagrindinė funkcionalumo dalis.
 - **v0.2** – sekanti versija, turtinti netikslumų.
-- **v0.3** – patobulinta versija, kuri turi visus reikiamus patobulinimus ir greitaveiklą.
+- **v0.3** – patobulinta ir finalinė versija, kuri turi visus reikiamus patobulinimus ir greitaveiklą.
 
 ## Rezultatai
 - Gavome teisingus rezultatus pagal testinius duomenis.
